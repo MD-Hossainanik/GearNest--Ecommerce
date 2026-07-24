@@ -1,0 +1,109 @@
+/* Full screen overlay */
+.page-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(6px);
+}
+
+/* Loader card */
+.loader-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 32px 36px;
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+  min-width: 260px;
+}
+
+/* Spinner */
+.spinner {
+  width: 58px;
+  height: 58px;
+  border: 5px solid #dbeafe;
+  border-top: 5px solid #2563eb;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+/* Brand */
+.brand-name {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+/* Loading text */
+.loading-text {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+  text-align: center;
+}
+
+/* Dots */
+.loading-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.loading-dots span {
+  width: 10px;
+  height: 10px;
+  background: #2563eb;
+  border-radius: 50%;
+  animation: bounce 0.8s infinite ease-in-out;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.loading-dots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+/* Animations */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  40% {
+    transform: translateY(-8px);
+    opacity: 1;
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+  .loader-card {
+    padding: 24px 20px;
+    min-width: 220px;
+  }
+
+  .brand-name {
+    font-size: 24px;
+  }
+
+  .spinner {
+    width: 48px;
+    height: 48px;
+  }
+}
