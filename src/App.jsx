@@ -55,29 +55,29 @@ function App() {
         },
         {
           path: "about",
-          element:<AboutPage/>,
+          element: <AboutPage />,
         },
         {
-          path:"products",
-          element:<ProductsPage/>
+          path: "products",
+          element: <ProductsPage />,
         },
         {
           path: "contact",
-          element:<ContactPage/>
+          element: <ContactPage />,
         },
         {
           path: "singleproduct/:id",
-          element:<SingleProductPage/>
+          element: <SingleProductPage />,
         },
         {
           path: "cart",
-          element:<CartPage/>
-        }
+          element: <CartPage />,
+        },
+        {
+          path: "*",
+          element: <NotFound />,
+        },
       ],
-    },
-    {
-      path: "*",
-      element: <NotFound />,
     },
   ]);
 
