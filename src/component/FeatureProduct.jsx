@@ -1,22 +1,10 @@
 import styled from "styled-components";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useProductContext } from "../context/ProductContext";
-import PageLoader from "../ui/PageLoader";
+import PageLoader from "./../ui/PageLoader";
 
-const ProductsPage = () => {
-
-  const { tags } = useParams();
-  
-  
-  const { products, isLoading, isError } = useProductContext();
-
-  const productsTags = tags ? products.filter((items) => {
-    return (items.tags.some((tag)=>tag.toLowerCase().includes(tags.toLowerCase())));
-  }) : products;
-  
-
-  console.log(productsTags);
-  
+const FeatureProduct = () => {
+  const { isError, isLoading, feature } = useProductContext();
 
   if (isError) {
     return "Somthing Wants Wrong";
@@ -27,39 +15,55 @@ const ProductsPage = () => {
   }
 
   return (
-    <Wrapper className="section">
-      <div className="container">
-        <div className="grid grid-three-column">
-          {productsTags.map((product) => {
-            const { id, title, category, price, thumbnail } = product;
+    <>
+      <Wrapper className="section">
+        <div className="container">
+          <div className="intro-data">Check Now!</div>
+          <div className="common-heading">Our Feature Services</div>
+          <div className="grid grid-three-column">
+            {feature.map((curElem) => {
+              const { id, title, tags, image } = curElem;
 
-            return (
-              <NavLink key={id} className="card-link">
-                <div className="card">
-                  <figure>
-                    <img src={thumbnail} alt={title} />
-                    <figcaption className="caption">{category}</figcaption>
-                  </figure>
+              return (
+                <NavLink to={`/products/${tags}`} key={id} className="card-link">
+                  <div className="card">
+                    <figure>
+                      <img src={image} alt={title} />
+                      <figcaption className="caption">{tags}</figcaption>
+                    </figure>
 
-                  <div className="card-data">
-                    <div className="card-data-flex">
+                    <div className="card-data">
                       <h3>{title}</h3>
-                      <p className="price">${price}</p>
                     </div>
                   </div>
-                </div>
-              </NavLink>
-            );
-          })}
+                </NavLink>
+              );
+            })}
+          </div>
         </div>
-      </div>
-    </Wrapper>
+      </Wrapper>
+    </>
   );
 };
 
 const Wrapper = styled.section`
   padding: 9rem 0;
   background-color: ${({ theme }) => theme.colors.bg};
+
+  .intro-data {
+    color: #6254f3;
+    text-transform: uppercase;
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: 0.1rem;
+  }
+
+  .common-heading {
+    font-size: 3.2rem;
+    font-weight: 600;
+    margin: 1rem 0 3rem;
+    color: #1e2340;
+  }
 
   .container {
     max-width: 120rem;
@@ -121,8 +125,6 @@ const Wrapper = styled.section`
       right: 1.2rem;
       max-width: calc(100% - 2.4rem);
       white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
       text-transform: uppercase;
       background-color: #fff;
       color: #6254f3;
@@ -150,56 +152,38 @@ const Wrapper = styled.section`
       padding: 1.5rem 2rem;
     }
 
-    .card-data-flex {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-    }
-
     h3 {
       color: #1e2340;
       text-transform: capitalize;
       font-weight: 500;
       font-size: 1.6rem;
       margin: 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .price {
-      color: #6254f3;
-      font-weight: 600;
-      font-size: 1.5rem;
-      white-space: nowrap;
-      margin: 0;
     }
   }
 
-  /* ---- Tablet ---- */
   @media screen and (max-width: 1024px) {
     padding: 6rem 0;
-
+    .common-heading {
+      font-size: 2.6rem;
+    }
     .grid-three-column {
       grid-template-columns: repeat(2, 1fr);
       gap: 2rem;
     }
   }
 
-  /* ---- Mobile ---- */
   @media screen and (max-width: 600px) {
     padding: 4rem 0;
-
+    .common-heading {
+      font-size: 2.2rem;
+    }
     .grid-three-column {
       grid-template-columns: repeat(1, 1fr);
       gap: 1.6rem;
     }
-
     figure {
       height: 20rem;
     }
   }
 `;
-
-export default ProductsPage;
+export default FeatureProduct;

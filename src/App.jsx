@@ -17,6 +17,7 @@ import NotFound from "./ui/NotFound.jsx";
 
 import { GlobalStyle } from "./GlobalStyle.jsx";
 import { ThemeProvider } from "styled-components";
+import { AppProvider } from "./context/ProductContext.jsx";
 
 
 function App() {
@@ -58,7 +59,7 @@ function App() {
           element: <AboutPage />,
         },
         {
-          path: "products",
+          path: "products/:tags?",
           element: <ProductsPage />,
         },
         {
@@ -83,10 +84,12 @@ function App() {
 
   return (
     <>
-      <ThemeProvider theme={theme}>
-        <GlobalStyle />
-        <RouterProvider router={router}></RouterProvider>
-      </ThemeProvider>
+      <AppProvider>
+        <ThemeProvider theme={theme}>
+          <GlobalStyle />
+          <RouterProvider router={router}></RouterProvider>
+        </ThemeProvider>
+      </AppProvider>
     </>
   );
 }
