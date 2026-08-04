@@ -18,6 +18,8 @@ import NotFound from "./ui/NotFound.jsx";
 import { GlobalStyle } from "./GlobalStyle.jsx";
 import { ThemeProvider } from "styled-components";
 import { AppProvider } from "./context/ProductContext.jsx";
+import FeatureProductPage from './page/FeatureProductPage';
+import { FilterProvider } from "./context/Filter_Context.jsx";
 
 
 function App() {
@@ -59,7 +61,11 @@ function App() {
           element: <AboutPage />,
         },
         {
-          path: "products/:tags?",
+          path: "featureProductPage/:tags?",
+          element: <FeatureProductPage/>,
+        },
+        {
+          path: "products",
           element: <ProductsPage />,
         },
         {
@@ -85,10 +91,12 @@ function App() {
   return (
     <>
       <AppProvider>
-        <ThemeProvider theme={theme}>
-          <GlobalStyle />
-          <RouterProvider router={router}></RouterProvider>
-        </ThemeProvider>
+        <FilterProvider>
+          <ThemeProvider theme={theme}>
+            <GlobalStyle />
+            <RouterProvider router={router}></RouterProvider>
+          </ThemeProvider>
+        </FilterProvider>
       </AppProvider>
     </>
   );

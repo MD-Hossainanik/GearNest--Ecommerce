@@ -1,70 +1,53 @@
-import styled from "styled-components";
 import { NavLink } from "react-router-dom";
+import styled from "styled-components";
+import PageLoader from "../ui/PageLoader";
 import { useProductContext } from "../context/ProductContext";
-import PageLoader from "./../ui/PageLoader";
 
+const GridView = ({ products }) => {
+  const { isLoading } = useProductContext();
 
-const FeatureProduct = () => {
-  const { isError, isLoading, feature } = useProductContext();
-
-  if (isError) {
-    return "Somthing Wants Wrong";
-  }
-
-  if (isLoading) {
-    return <PageLoader />;
-  }
+  if (isLoading) return <PageLoader />;
 
   return (
     <>
       <Wrapper className="section">
-        <div className="container">
-          <div className="intro-data">Check Now!</div>
-          <div className="common-heading">Our Feature Services</div>
-          <div className="grid grid-three-column">
-            {feature.map((curElem) => {
-              const { id, title, tags, image } = curElem;
+        <div className="container grid grid-three-column">
+          {products?.map((product) => {
+            const { id, title, category, price, thumbnail } = product;
 
-              return (
-                <NavLink to={`/featureProductPage/${tags}`} key={id} className="card-link">
-                  <div className="card">
-                    <figure>
-                      <img src={image} alt={title} />
-                      <figcaption className="caption">{tags}</figcaption>
-                    </figure>
+            return (
+              <NavLink
+                to={`/singleproduct/${id}`}
+                key={id}
+                className="card-link"
+              >
+                <div className="card">
+                  <figure>
+                    <img src={thumbnail} alt={title} />
+                    <figcaption className="caption">{category}</figcaption>
+                  </figure>
 
-                    <div className="card-data">
+                  <div className="card-data">
+                    <div className="card-data-flex">
                       <h3>{title}</h3>
+                      <p className="price">${price}</p>
                     </div>
                   </div>
-                </NavLink>
-              );
-            })}
-          </div>
+                </div>
+              </NavLink>
+            );
+          })}
         </div>
       </Wrapper>
     </>
   );
 };
 
+export default GridView;
+
 const Wrapper = styled.section`
   padding: 9rem 0;
   background-color: ${({ theme }) => theme.colors.bg};
-
-  .intro-data {
-    color: #6254f3;
-    text-transform: uppercase;
-    font-size: 1.4rem;
-    font-weight: 600;
-    letter-spacing: 0.1rem;
-  }
-
-  .common-heading {
-    font-size: 3.2rem;
-    font-weight: 600;
-    margin: 1rem 0 3rem;
-    color: #1e2340;
-  }
 
   .container {
     max-width: 120rem;
@@ -76,10 +59,14 @@ const Wrapper = styled.section`
     text-decoration: none;
     display: block;
     color: inherit;
+    height: 100%;
+  }
+
+  .grid {
+    display: grid;
   }
 
   .grid-three-column {
-    display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 3rem;
   }
@@ -126,6 +113,8 @@ const Wrapper = styled.section`
       right: 1.2rem;
       max-width: calc(100% - 2.4rem);
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       text-transform: uppercase;
       background-color: #fff;
       color: #6254f3;
@@ -139,18 +128,32 @@ const Wrapper = styled.section`
   }
 
   .card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
     background-color: #fff;
     border-radius: 1rem;
     overflow: hidden;
     box-shadow: 0 0.2rem 1rem rgba(0, 0, 0, 0.06);
-    transition: transform 0.2s linear;
+    transition:
+      transform 0.2s linear,
+      box-shadow 0.2s linear;
 
     &:hover {
       transform: translateY(-0.4rem);
+      box-shadow: 0 0.4rem 1.6rem rgba(0, 0, 0, 0.1);
     }
 
     .card-data {
       padding: 1.5rem 2rem;
+    }
+
+    .card-data-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
     }
 
     h3 {
@@ -159,32 +162,75 @@ const Wrapper = styled.section`
       font-weight: 500;
       font-size: 1.6rem;
       margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .price {
+      color: #6254f3;
+      font-weight: 600;
+      font-size: 1.5rem;
+      white-space: nowrap;
+      margin: 0;
+      flex-shrink: 0;
     }
   }
 
+  /* ---- Large Tablet / Small Laptop ---- */
   @media screen and (max-width: 1024px) {
     padding: 6rem 0;
-    .common-heading {
-      font-size: 2.6rem;
-    }
+
     .grid-three-column {
       grid-template-columns: repeat(2, 1fr);
       gap: 2rem;
     }
   }
 
-  @media screen and (max-width: 600px) {
-    padding: 4rem 0;
-    .common-heading {
-      font-size: 2.2rem;
-    }
+  /* ---- Tablet ---- */
+  @media screen and (max-width: 768px) {
     .grid-three-column {
-      grid-template-columns: repeat(1, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 1.6rem;
     }
+
+    figure {
+      height: 18rem;
+    }
+  }
+
+  /* ---- Mobile ---- */
+  @media screen and (max-width: 576px) {
+    padding: 4rem 0;
+
+    .container {
+      padding: 0 1.5rem;
+    }
+
+    .grid-three-column {
+      grid-template-columns: 1fr;
+      gap: 1.6rem;
+    }
+
     figure {
       height: 20rem;
     }
   }
+
+  /* ---- Small Mobile ---- */
+  @media screen and (max-width: 360px) {
+    .container {
+      padding: 0 1rem;
+    }
+
+    figure {
+      height: 18rem;
+    }
+
+    .card .card-data {
+      padding: 1.2rem 1.5rem;
+    }
+  }
 `;
-export default FeatureProduct;

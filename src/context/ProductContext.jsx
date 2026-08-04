@@ -1,9 +1,14 @@
-import { createContext, useContext, useEffect, useReducer } from "react";
-import { getAllProduct } from "../api/ProductApi";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+} from "react";
+import { getAllProduct, getSingleProduct } from "../api/ProductApi";
 
 const AppContext = createContext();
 
- const useProductContext = () => {
+const useProductContext = () => {
   return useContext(AppContext);
 };
 
@@ -11,7 +16,9 @@ const initialState = {
   isLoading: false,
   isError: false,
   products: [],
-
+  singleProduct: {},
+  isSingleLoading: false,
+  isSingleError: false,
   feature: [
     {
       id: 124,
@@ -58,9 +65,8 @@ const reducer = (state, action) => {
             "mobile-accessories",
           ].includes(item.category),
         ),
-        
       };
-    
+
     case "API_ERROR":
       return {
         ...state,
@@ -68,14 +74,36 @@ const reducer = (state, action) => {
         isError: true,
       };
 
+    case "SET_ISSingle_LOADING":
+      return {
+        ...state,
+        isSingleLoading: true,
+        isSingleError: false,
+      };
+
+    case "SET_SINGLE_DATA":
+      return {
+        ...state,
+        isSingleLoading: false,
+        isSingleError: false,
+        singleProduct: action.payload,
+      };
+
+    case "SINGLE_API_ERROR":
+      return {
+        ...state,
+        isSingleLoading: false,
+        isSingleError: true,
+      };
+
     default:
       return state;
   }
 };
 
- const AppProvider = ({ children }) => {
+const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  
+
   useEffect(() => {
     const fetchProducts = async () => {
       dispatch({ type: "SET_ISLOADING" });
@@ -88,8 +116,19 @@ const reducer = (state, action) => {
     };
     fetchProducts();
   }, []);
-  const value = { ...state };
+
+  const fetchSingleProduct = async (id) => {
+    dispatch({ type: "SET_ISSingle_LOADING" });
+    try {
+      const res = await getSingleProduct(id);
+      dispatch({ type: "SET_SINGLE_DATA", payload: res.data });
+    } catch (error) {
+      dispatch({ type: "SINGLE_API_ERROR" });
+    }
+  };
+
+  const value = { ...state, fetchSingleProduct };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 // eslint-disable-next-line react-refresh/only-export-components
-export { useProductContext, AppProvider };
+export { AppProvider, useProductContext };
