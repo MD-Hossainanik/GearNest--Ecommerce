@@ -27,7 +27,7 @@ const ProductsPage = () => {
 export default ProductsPage;
 
 const Wrapper = styled.section`
-  padding: 9rem 0 5rem 0;
+  padding: 9rem 0 6rem 0;
 
   .container {
     max-width: 130rem;
@@ -48,14 +48,13 @@ const Wrapper = styled.section`
   .filter-side {
     position: sticky;
     top: 2rem;
+    min-width: 0;
   }
 
   .product-view-sort {
     min-width: 0;
 
     .sort-filter {
-      display: flex;
-      justify-content: flex-end;
       margin-bottom: 2.4rem;
     }
 
@@ -99,7 +98,6 @@ const Wrapper = styled.section`
     }
 
     .product-view-sort .sort-filter {
-      justify-content: flex-start;
       margin-bottom: 1.8rem;
     }
   }

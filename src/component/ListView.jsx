@@ -6,76 +6,81 @@ import { Button } from "@mui/material";
 import { useState } from "react";
 
 const ListView = ({ products }) => {
-  const [expandedId, setExpandedId] = useState(null)
+  const [expandedId, setExpandedId] = useState(null);
   const { isLoading } = useProductContext();
 
   if (isLoading) return <PageLoader />;
 
+  if (!products?.length) {
+    return <NoProducts>দুঃখিত, কোনো প্রোডাক্ট পাওয়া যায়নি।</NoProducts>;
+  }
+
   return (
-    <>
-      <Wrapper className="section">
-        <div className="container grid">
-          {products?.map((product) => {
-            const { id, title, category, price, thumbnail, description } =
-              product;
+    <Wrapper className="grid">
+      {products.map((product) => {
+        const { id, title, category, price, thumbnail, description } = product;
+        const isExpanded = expandedId === id;
 
-            return (
-              <NavLink
-                to={`/singleproduct/${id}`}
-                key={id}
-                className="card-link"
-              >
-                <div className="card grid grid-two-column">
-                  <figure>
-                    <img src={thumbnail} alt={title} />
-                    <figcaption className="caption">{category}</figcaption>
-                  </figure>
+        return (
+          <NavLink to={`/singleproduct/${id}`} key={id} className="card-link">
+            <div className="card grid-two-column">
+              <figure>
+                <img src={thumbnail} alt={title} />
+                <figcaption className="caption">{category}</figcaption>
+              </figure>
 
-                  <div className="card-data">
-                    <div className="card-data-flex">
-                      <h3>{title}</h3>
-                      <p className="price">${price}</p>
-                    </div>
-
-                    {description && (
-                      <p className="description">{expandedId===id ? description:`${description.slice(0, 150)}...`}
-                        <Button onClick={(e) => {
-                          e.preventDefault();
-                          setExpandedId(expandedId===id? null : id)
-                        }}>{expandedId===id ? "Read Less" : "Read Full"}</Button>
-                      </p>
-                    )}
-
-                    <div className="btn-main">
-                      <span>READ MORE</span>
-                    </div>
-                  </div>
+              <div className="card-data">
+                <div className="card-data-flex">
+                  <h3>{title}</h3>
+                  <p className="price">${price}</p>
                 </div>
-              </NavLink>
-            );
-          })}
-        </div>
-      </Wrapper>
-    </>
+
+                {description && (
+                  <p
+                    className={
+                      isExpanded ? "description expanded" : "description"
+                    }
+                  >
+                    {isExpanded
+                      ? description
+                      : `${description.slice(0, 150)}...`}
+                    <Button
+                      size="small"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setExpandedId(isExpanded ? null : id);
+                      }}
+                    >
+                      {isExpanded ? "Read Less" : "Read Full"}
+                    </Button>
+                  </p>
+                )}
+
+                <div className="btn-main">
+                  <span>READ MORE</span>
+                </div>
+              </div>
+            </div>
+          </NavLink>
+        );
+      })}
+    </Wrapper>
   );
 };
 
 export default ListView;
 
-const Wrapper = styled.section`
-  padding: 9rem 0;
-  background-color: ${({ theme }) => theme.colors.bg};
+const NoProducts = styled.p`
+  padding: 4rem 0;
+  font-size: 1.6rem;
+  color: #6c757d;
+  text-align: center;
+`;
 
-  .container {
-    max-width: 120rem;
-    margin: 0 auto;
-    padding: 0 2rem;
-  }
-
-  .grid {
-    display: grid;
-    gap: 2.4rem;
-  }
+const Wrapper = styled.div`
+  display: grid;
+  gap: 2.4rem;
+  width: 100%;
 
   .card-link {
     text-decoration: none;
@@ -84,6 +89,7 @@ const Wrapper = styled.section`
   }
 
   .card {
+    display: grid;
     background-color: #fff;
     border-radius: 1rem;
     overflow: hidden;
@@ -203,10 +209,20 @@ const Wrapper = styled.section`
     font-size: 1.4rem;
     line-height: 1.6;
     margin: 0 0 1.4rem 0;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+
+    &:not(.expanded) {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    button {
+      font-size: 1.2rem;
+      padding: 0.2rem 0.8rem;
+      margin-left: 0.4rem;
+      vertical-align: middle;
+    }
   }
 
   .btn-main {
@@ -232,8 +248,6 @@ const Wrapper = styled.section`
 
   /* ---- Large Tablet / Small Laptop ---- */
   @media screen and (max-width: 1024px) {
-    padding: 6rem 0;
-
     .grid-two-column {
       grid-template-columns: 20rem 1fr;
     }
@@ -260,15 +274,7 @@ const Wrapper = styled.section`
 
   /* ---- Mobile: stack image on top ---- */
   @media screen and (max-width: 576px) {
-    padding: 4rem 0;
-
-    .container {
-      padding: 0 1.5rem;
-    }
-
-    .grid {
-      gap: 1.8rem;
-    }
+    gap: 1.8rem;
 
     .grid-two-column {
       grid-template-columns: 1fr;
@@ -298,14 +304,6 @@ const Wrapper = styled.section`
 
   /* ---- Small Mobile ---- */
   @media screen and (max-width: 360px) {
-    .container {
-      padding: 0 1rem;
-    }
-
-    figure {
-      height: 18rem;
-    }
-
     .card-data {
       padding: 1.4rem;
     }

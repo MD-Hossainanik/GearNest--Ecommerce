@@ -8,51 +8,53 @@ const GridView = ({ products }) => {
 
   if (isLoading) return <PageLoader />;
 
+  if (!products?.length) {
+    return <NoProducts>দুঃখিত, কোনো প্রোডাক্ট পাওয়া যায়নি।</NoProducts>;
+  }
+
   return (
-    <>
-      <Wrapper className="section">
-        <div className="container grid grid-three-column">
-          {products?.map((product) => {
-            const { id, title, category, price, thumbnail } = product;
+    <Wrapper className="grid grid-three-column">
+      {products.map((product) => {
+        const { id, title, category, price, thumbnail } = product;
 
-            return (
-              <NavLink
-                to={`/singleproduct/${id}`}
-                key={id}
-                className="card-link"
-              >
-                <div className="card">
-                  <figure>
-                    <img src={thumbnail} alt={title} />
-                    <figcaption className="caption">{category}</figcaption>
-                  </figure>
+        return (
+          <NavLink to={`/singleproduct/${id}`} key={id} className="card-link">
+            <div className="card">
+              <figure>
+                <img src={thumbnail} alt={title} />
+                <figcaption className="caption">{category}</figcaption>
+              </figure>
 
-                  <div className="card-data">
-                    <div className="card-data-flex">
-                      <h3>{title}</h3>
-                      <p className="price">${price}</p>
-                    </div>
-                  </div>
+              <div className="card-data">
+                <div className="card-data-flex">
+                  <h3>{title}</h3>
+                  <p className="price">${price}</p>
                 </div>
-              </NavLink>
-            );
-          })}
-        </div>
-      </Wrapper>
-    </>
+              </div>
+            </div>
+          </NavLink>
+        );
+      })}
+    </Wrapper>
   );
 };
 
 export default GridView;
 
-const Wrapper = styled.section`
-  padding: 9rem 0;
-  background-color: ${({ theme }) => theme.colors.bg};
+const NoProducts = styled.p`
+  padding: 4rem 0;
+  font-size: 1.6rem;
+  color: #6c757d;
+  text-align: center;
+`;
 
-  .container {
-    max-width: 120rem;
-    margin: 0 auto;
-    padding: 0 2rem;
+const Wrapper = styled.div`
+  display: grid;
+  width: 100%;
+
+  &.grid-three-column {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
   }
 
   .card-link {
@@ -60,15 +62,6 @@ const Wrapper = styled.section`
     display: block;
     color: inherit;
     height: 100%;
-  }
-
-  .grid {
-    display: grid;
-  }
-
-  .grid-three-column {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 3rem;
   }
 
   figure {
@@ -181,9 +174,7 @@ const Wrapper = styled.section`
 
   /* ---- Large Tablet / Small Laptop ---- */
   @media screen and (max-width: 1024px) {
-    padding: 6rem 0;
-
-    .grid-three-column {
+    &.grid-three-column {
       grid-template-columns: repeat(2, 1fr);
       gap: 2rem;
     }
@@ -191,11 +182,6 @@ const Wrapper = styled.section`
 
   /* ---- Tablet ---- */
   @media screen and (max-width: 768px) {
-    .grid-three-column {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1.6rem;
-    }
-
     figure {
       height: 18rem;
     }
@@ -203,13 +189,7 @@ const Wrapper = styled.section`
 
   /* ---- Mobile ---- */
   @media screen and (max-width: 576px) {
-    padding: 4rem 0;
-
-    .container {
-      padding: 0 1.5rem;
-    }
-
-    .grid-three-column {
+    &.grid-three-column {
       grid-template-columns: 1fr;
       gap: 1.6rem;
     }
@@ -221,10 +201,6 @@ const Wrapper = styled.section`
 
   /* ---- Small Mobile ---- */
   @media screen and (max-width: 360px) {
-    .container {
-      padding: 0 1rem;
-    }
-
     figure {
       height: 18rem;
     }

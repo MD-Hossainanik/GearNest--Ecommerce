@@ -1,7 +1,5 @@
-import React from 'react'
+
 import { useFilterContext } from '../context/Filter_Context';
-import { MdGridView } from 'react-icons/md';
-import { FaListUl } from 'react-icons/fa';
 import GridView from './GridView';
 import ListView from './ListView';
 
