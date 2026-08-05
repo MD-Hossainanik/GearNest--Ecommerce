@@ -12,7 +12,10 @@ const initialState = {
   filter_products: [],
   all_products: [],
   grid_view: true,
-  sorting_value:"lowest",
+  sorting_value: "lowest",
+  filters: {
+    text: "",
+  }
 };
 
 const reducer = (state, action) => {
@@ -36,7 +39,7 @@ const reducer = (state, action) => {
         };
 
       case "SORTING_PRODUCTS": {
-        let tempSortProduct = [...action.payload];
+        let tempSortProduct = [...state.filter_products];
 
         if (state.sorting_value === "a-z") {
           tempSortProduct.sort((a, b) =>
@@ -58,6 +61,37 @@ const reducer = (state, action) => {
         };
       }
         
+      case "UPDATE_FILTERS-VALUE": {
+        const { name, value } = action.payload;
+
+        return {
+          ...state,
+          filters: {
+            ...state.filters,
+            [name]: value,
+          },
+        };
+      }
+
+      case "FILTER_PRODUCTS": {
+
+        let { all_products } = state;
+        let temFilterProduct = [...all_products];
+        let { text } = state.filters;
+        if (text) {
+          temFilterProduct = temFilterProduct.filter((item) => {
+            return item.title.toLowerCase().includes(text.toLowerCase());
+          });
+        }
+
+        return {
+          ...state,
+          filter_products: temFilterProduct,
+        };
+      }
+        
+       
+        
       default:
         return state;
     }
@@ -76,16 +110,24 @@ export const FilterProvider = ({ children }) => {
     dispatch({ type: "SET_SORT_VALUE", payload: value });
   }
 
+  const updateFilterValue = (e) => {
+    
+    const { name, value } = e.target;
+
+    dispatch({type:"UPDATE_FILTERS-VALUE", payload:{name,value}});
+  }
+
     useEffect(() => {
       
     dispatch({ type: "LOAD_FILTER_PRODUCTS", payload: products });
   }, [products]);
 
   useEffect(() => {
-    dispatch({ type: "SORTING_PRODUCTS", payload: products });
-  }, [state.sorting_value, products]);
+    dispatch({type:"FILTER_PRODUCTS"})
+    dispatch({ type: "SORTING_PRODUCTS",});
+  }, [state.sorting_value,state.filters]);
 
-  const value = { ...state, setGridView, sorting };
+  const value = { ...state, setGridView, sorting, updateFilterValue };
 
   return (
     <FilterContext.Provider value={value}>{children}</FilterContext.Provider>
