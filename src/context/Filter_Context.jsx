@@ -14,7 +14,8 @@ const initialState = {
   sorting_value: "lowest",
   filters: {
     text: "",
-    category:"All"
+    category: "All",
+    brand: "All",
   },
 };
 
@@ -74,47 +75,49 @@ const reducer = (state, action) => {
     }
 
     case "FILTER_PRODUCTS": {
-      let { all_products } = state;
-      let tempFilterProduct = [...all_products];
+      let tempFilterProduct = [...state.all_products];
 
-      let { text, category } = state.filters;
+      const { text, category, brand } = state.filters;
 
+      // Search
       if (text) {
         tempFilterProduct = tempFilterProduct.filter((item) =>
           item.title.toLowerCase().includes(text.toLowerCase()),
         );
       }
 
-     if (category === "All") {
-       tempFilterProduct = [...all_products];
-     } else if (category === "watches") {
-       tempFilterProduct = tempFilterProduct.filter(
-         (item) => item.tags[0] === category,
-       );
-     } else if (
-       category === "mens-watches" ||
-       category === "womens-watches" ||
-       category === "smartphones"
-     ) {
-       tempFilterProduct = tempFilterProduct.filter(
-         (item) => item.category === category,
-       );
-     } else if (category === "electronics") {
-       tempFilterProduct = tempFilterProduct.filter(
-         (item) => item.tags[0] === category,
-       );
+      // Category
+      if (category !== "All") {
+        if (category === "watches") {
+          tempFilterProduct = tempFilterProduct.filter((item) =>
+            item.tags.includes("watches"),
+          );
+        } else if (
+          category === "mens-watches" ||
+          category === "womens-watches" ||
+          category === "smartphones"
+        ) {
+          tempFilterProduct = tempFilterProduct.filter(
+            (item) => item.category === category,
+          );
+        } else if (category === "electronics") {
+          tempFilterProduct = tempFilterProduct.filter((item) =>
+            item.tags.includes("electronics"),
+          );
+        }
       }
-      
-      if (text) {
-        tempFilterProduct = tempFilterProduct.filter((item) =>
-          item.title.toLowerCase().includes(text.toLowerCase()),
+
+      // Brand
+      if (brand !== "All") {
+        tempFilterProduct = tempFilterProduct.filter(
+          (item) => item.brand === brand,
         );
       }
 
-        return {
-          ...state,
-          filter_products: tempFilterProduct,
-        };
+      return {
+        ...state,
+        filter_products: tempFilterProduct,
+      };
     }
 
     default:
@@ -148,7 +151,7 @@ export const FilterProvider = ({ children }) => {
   useEffect(() => {
     dispatch({ type: "FILTER_PRODUCTS" });
     dispatch({ type: "SORTING_PRODUCTS" });
-  }, [state.sorting_value, state.filters,products]);
+  }, [state.sorting_value, state.filters, products]);
 
   const value = { ...state, setGridView, sorting, updateFilterValue };
 

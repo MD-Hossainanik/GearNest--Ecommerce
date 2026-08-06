@@ -6,7 +6,7 @@ const FilterSection = () => {
   const [openCategory, setOpenCategory] = useState(null);
 
   const {
-    filters: { text },
+    filters: { text, brand },
     updateFilterValue,
     all_products,
   } = useFilterContext();
@@ -15,6 +15,8 @@ const FilterSection = () => {
     "All",
     ...new Set(all_products.map((item) => item.tags[0])),
   ];
+
+  const brands = ["All", ...new Set(all_products.map((item) => item.brand))];
 
   const subCategory =
     openCategory === "watches"
@@ -48,11 +50,19 @@ const FilterSection = () => {
               <>
                 <button
                   type="button"
+                  className="category-toggle"
                   onClick={() =>
                     setOpenCategory(openCategory === item ? null : item)
                   }
                 >
-                  {item}
+                  <span>{item}</span>
+                  <span
+                    className={
+                      openCategory === "watches" ? "chevron open" : "chevron"
+                    }
+                  >
+                    ⌄
+                  </span>
                 </button>
 
                 {openCategory === "watches" && (
@@ -93,6 +103,24 @@ const FilterSection = () => {
           </div>
         ))}
       </div>
+
+      <form>
+        <div className="filter-brand">
+          <h3>Brand Name</h3>
+          <select
+            name="brand"
+            id="brand"
+            value={brand}
+            onChange={updateFilterValue}
+          >
+            {brands.map((item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))}
+          </select>
+        </div>
+      </form>
     </Wrapper>
   );
 };
@@ -108,6 +136,7 @@ const Wrapper = styled.section`
   display: flex;
   flex-direction: column;
   gap: 2.4rem;
+  width: 100%;
 
   h3 {
     font-size: 1.5rem;
@@ -169,6 +198,23 @@ const Wrapper = styled.section`
       }
     }
 
+    .category-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .chevron {
+        font-size: 1.2rem;
+        color: #9b9ba3;
+        transition: transform 0.2s linear;
+        line-height: 1;
+
+        &.open {
+          transform: rotate(180deg);
+        }
+      }
+    }
+
     .active {
       background-color: #1e2340;
       color: #fff;
@@ -195,16 +241,58 @@ const Wrapper = styled.section`
     }
   }
 
-  /* ---- Tablet: same vertical layout, just tighter spacing ---- */
-  @media (max-width: ${({ theme }) => theme.media.tab}) {
-    padding: 1.8rem;
-    gap: 2rem;
+  .filter-brand {
+    select {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      font-size: 1.4rem;
+      color: #1e2340;
+      border: 0.1rem solid rgb(170 170 170 / 40%);
+      border-radius: 0.5rem;
+      background-color: #fff;
+      cursor: pointer;
+      outline: none;
+      text-transform: capitalize;
+      transition: border-color 0.2s linear;
+
+      &:hover,
+      &:focus {
+        border-color: #1e2340;
+      }
+    }
   }
 
-  /* ---- Mobile: tighter still ---- */
+  /* ================= Large Tablet / Small Laptop ================= */
+  @media (max-width: 1024px) {
+    padding: 2rem;
+    gap: 2.2rem;
+  }
+
+  /* ================= Tablet ================= */
+  @media (max-width: ${({ theme }) => theme.media.tab}) {
+    padding: 2rem;
+    gap: 2rem;
+
+    h3 {
+      font-size: 1.4rem;
+    }
+
+    .filter-category button {
+      padding: 0.8rem 1rem;
+      font-size: 1.35rem;
+    }
+  }
+
+  /* ================= Mobile ================= */
   @media (max-width: ${({ theme }) => theme.media.mobile}) {
-    padding: 1.4rem;
-    gap: 1.4rem;
+    padding: 1.6rem;
+    gap: 1.6rem;
+    border-radius: 0.6rem;
+
+    h3 {
+      font-size: 1.35rem;
+      margin-bottom: 0.2rem;
+    }
 
     .filter-search input {
       padding: 0.8rem 1rem;
@@ -212,13 +300,33 @@ const Wrapper = styled.section`
     }
 
     .filter-category button {
-      padding: 0.7rem 0.8rem;
+      padding: 0.7rem 0.9rem;
       font-size: 1.3rem;
     }
 
-    .sub-category button {
-      padding: 0.6rem 0.8rem;
-      font-size: 1.2rem;
+    .sub-category {
+      padding: 0.2rem 0 0.2rem 1.1rem;
+      margin-left: 0.7rem;
+
+      button {
+        padding: 0.6rem 0.8rem;
+        font-size: 1.2rem;
+      }
+    }
+
+    .filter-brand select {
+      padding: 0.8rem 0.9rem;
+      font-size: 1.3rem;
+    }
+  }
+
+  /* ================= Small Mobile ================= */
+  @media (max-width: 360px) {
+    padding: 1.3rem;
+
+    .filter-category button {
+      padding: 0.65rem 0.8rem;
+      font-size: 1.25rem;
     }
   }
 `;
