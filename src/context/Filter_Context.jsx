@@ -16,17 +16,31 @@ const initialState = {
     text: "",
     category: "All",
     brand: "All",
+    maxPrice: 0,
+    price: 0,
+    minPrice:0,
   },
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "LOAD_FILTER_PRODUCTS":
+    case "LOAD_FILTER_PRODUCTS": {
+      let maxPrice = Math.max(...action.payload.map((curElem) => curElem.price));
+       
+
       return {
         ...state,
         filter_products: [...action.payload],
         all_products: [...action.payload],
+        filters: {
+          ...state.filters,
+          maxPrice: maxPrice,
+          price: maxPrice,
+        }
       };
+    }
+
+     
     case "SET_GRID_VIEW":
       return {
         ...state,
@@ -77,7 +91,7 @@ const reducer = (state, action) => {
     case "FILTER_PRODUCTS": {
       let tempFilterProduct = [...state.all_products];
 
-      const { text, category, brand } = state.filters;
+      const { text, category, brand, price } = state.filters;
 
       // Search
       if (text) {
@@ -109,9 +123,13 @@ const reducer = (state, action) => {
 
       // Brand
       if (brand !== "All") {
-        tempFilterProduct = tempFilterProduct.filter(
-          (item) => item.brand === brand,
-        );
+        tempFilterProduct = tempFilterProduct.filter((item) => item.brand === brand);
+      }
+
+      //Price
+
+      if (price) {
+        tempFilterProduct = tempFilterProduct.filter((item) => item.price <= price)
       }
 
       return {
@@ -119,6 +137,25 @@ const reducer = (state, action) => {
         filter_products: tempFilterProduct,
       };
     }
+      
+    case "CLEAR_ALL_FILTERS": { 
+      const maxPrice =
+        action.payload.length > 0
+          ? Math.max(...action.payload.map((item) => item.price))
+          : 0;
+    
+      return {
+        ...state,
+        filters: {
+          text: "",
+          category: "All",
+          brand: "All",
+          maxPrice: maxPrice,
+          price: maxPrice,
+          minPrice: 0,
+        },
+      };
+  }
 
     default:
       return state;
@@ -144,6 +181,11 @@ export const FilterProvider = ({ children }) => {
     dispatch({ type: "UPDATE_FILTERS-VALUE", payload: { name, value } });
   };
 
+  const clearFilter = () => {
+    
+    dispatch({type:"CLEAR_ALL_FILTERS",payload:state.all_products})
+  }
+
   useEffect(() => {
     dispatch({ type: "LOAD_FILTER_PRODUCTS", payload: products });
   }, [products]);
@@ -153,7 +195,13 @@ export const FilterProvider = ({ children }) => {
     dispatch({ type: "SORTING_PRODUCTS" });
   }, [state.sorting_value, state.filters, products]);
 
-  const value = { ...state, setGridView, sorting, updateFilterValue };
+  const value = {
+    ...state,
+    setGridView,
+    sorting,
+    updateFilterValue,
+    clearFilter,
+  };
 
   return (
     <FilterContext.Provider value={value}>{children}</FilterContext.Provider>

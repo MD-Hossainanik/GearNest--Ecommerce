@@ -1,13 +1,15 @@
+import { useState } from "react";
 import styled from "styled-components";
 import { useFilterContext } from "../context/Filter_Context";
-import { useState } from "react";
+import { Button } from "../ui/Button.jsx";
 
 const FilterSection = () => {
   const [openCategory, setOpenCategory] = useState(null);
 
   const {
-    filters: { text, brand },
+    filters: { text, brand, price, maxPrice, minPrice },
     updateFilterValue,
+    clearFilter,
     all_products,
   } = useFilterContext();
 
@@ -121,6 +123,28 @@ const FilterSection = () => {
           </select>
         </div>
       </form>
+
+      <div className="filter-price">
+        <h3>Price</h3>
+        <p className="price-value">${price}</p>
+        <input
+          type="range"
+          min={minPrice}
+          max={maxPrice}
+          value={price}
+          step="1"
+          name="price"
+          onChange={updateFilterValue}
+        />
+        <div className="price-range-labels">
+          <span>${minPrice}</span>
+          <span>${maxPrice}</span>
+        </div>
+      </div>
+
+      <div className="filter-clear">
+        <Button onClick={clearFilter}>Clear Filters</Button>
+      </div>
     </Wrapper>
   );
 };
@@ -146,6 +170,7 @@ const Wrapper = styled.section`
     margin-bottom: 0.4rem;
   }
 
+  /* ---------- Search ---------- */
   .filter-search {
     input {
       width: 100%;
@@ -168,6 +193,7 @@ const Wrapper = styled.section`
     }
   }
 
+  /* ---------- Category ---------- */
   .filter-category {
     display: flex;
     flex-direction: column;
@@ -241,6 +267,7 @@ const Wrapper = styled.section`
     }
   }
 
+  /* ---------- Brand ---------- */
   .filter-brand {
     select {
       width: 100%;
@@ -258,6 +285,96 @@ const Wrapper = styled.section`
       &:hover,
       &:focus {
         border-color: #1e2340;
+      }
+    }
+  }
+
+  /* ---------- Price ---------- */
+  .filter-price {
+    h3 {
+      margin-bottom: 0;
+    }
+
+    .price-value {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #1e2340;
+      margin: 0.6rem 0 1rem 0;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 0.4rem;
+      border-radius: 1rem;
+      appearance: none;
+      background-color: #ececf0;
+      outline: none;
+      cursor: pointer;
+      margin-bottom: 0.8rem;
+
+      &::-webkit-slider-thumb {
+        appearance: none;
+        width: 1.7rem;
+        height: 1.7rem;
+        border-radius: 50%;
+        background-color: #1e2340;
+        border: 0.3rem solid #fff;
+        box-shadow: 0 0 0 0.1rem rgb(170 170 170 / 40%);
+        cursor: pointer;
+        transition: transform 0.15s linear;
+
+        &:hover {
+          transform: scale(1.1);
+        }
+      }
+
+      &::-moz-range-thumb {
+        width: 1.7rem;
+        height: 1.7rem;
+        border-radius: 50%;
+        background-color: #1e2340;
+        border: 0.3rem solid #fff;
+        box-shadow: 0 0 0 0.1rem rgb(170 170 170 / 40%);
+        cursor: pointer;
+        transition: transform 0.15s linear;
+
+        &:hover {
+          transform: scale(1.1);
+        }
+      }
+
+      &::-moz-range-track {
+        height: 0.4rem;
+        border-radius: 1rem;
+        background-color: #ececf0;
+      }
+    }
+
+    .price-range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.2rem;
+      color: #9b9ba3;
+    }
+  }
+
+  /* ---------- Clear button ---------- */
+  .filter-clear {
+    button {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #1e2340;
+      background-color: transparent;
+      border: 0.1rem solid #1e2340;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s linear;
+
+      &:hover {
+        background-color: #1e2340;
+        color: #fff;
       }
     }
   }
@@ -316,6 +433,27 @@ const Wrapper = styled.section`
 
     .filter-brand select {
       padding: 0.8rem 0.9rem;
+      font-size: 1.3rem;
+    }
+
+    .filter-price {
+      .price-value {
+        font-size: 1.4rem;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+
+      input[type="range"]::-moz-range-thumb {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+    }
+
+    .filter-clear button {
+      padding: 0.85rem;
       font-size: 1.3rem;
     }
   }
