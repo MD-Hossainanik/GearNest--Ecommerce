@@ -5,7 +5,7 @@ const CartAmountToggle = ({
   amount=1,
   amountdecrease,
   amountincrease,
-  maxOrder=0,
+  maxOrder,
 }) => {
   return (
     <Wrapper>

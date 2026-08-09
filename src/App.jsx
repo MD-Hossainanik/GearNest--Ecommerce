@@ -20,6 +20,7 @@ import { ThemeProvider } from "styled-components";
 import { AppProvider } from "./context/ProductContext.jsx";
 import FeatureProductPage from './page/FeatureProductPage';
 import { FilterProvider } from "./context/Filter_Context.jsx";
+import { CartProvider } from "./context/cart_context.jsx";
 
 
 function App() {
@@ -92,10 +93,13 @@ function App() {
     <>
       <AppProvider>
         <FilterProvider>
-          <ThemeProvider theme={theme}>
-            <GlobalStyle />
-            <RouterProvider router={router}></RouterProvider>
-          </ThemeProvider>
+          <CartProvider>
+            <ThemeProvider theme={theme}>
+              <GlobalStyle />
+
+              <RouterProvider router={router}></RouterProvider>
+            </ThemeProvider>
+          </CartProvider>
         </FilterProvider>
       </AppProvider>
     </>

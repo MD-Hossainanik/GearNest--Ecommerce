@@ -6,6 +6,7 @@ import styled from "styled-components";
 import CartAmountToggle from "../component/CartAmountToggle";
 import PageNavigation from "../component/PageNavigation";
 import Star from "../component/Star";
+import { useCartContext } from "../context/cart_context";
 import { useProductContext } from "../context/ProductContext";
 import PageLoader from "../ui/PageLoader";
 import { Button } from "./../ui/Button";
@@ -14,6 +15,7 @@ import NotFound from "./../ui/NotFound";
 const SingleProductPage = () => {
   const { isSingleError, isSingleLoading, fetchSingleProduct, singleProduct } =
     useProductContext();
+  const { addToCart } = useCartContext();
   const { id } = useParams();
   const [mainImage, setMainImage] = useState("");
   const [amount, setAmount] = useState(1);
@@ -36,22 +38,22 @@ const SingleProductPage = () => {
   }
 
   const {
-    title="",
-    brand="",
-    price=0,
-    discountPercentage=0,
-    description="",
-    category="",
-    availabilityStatus="",
-    warrantyInformation="",
-    shippingInformation="",
-    returnPolicy="",
-    rating=0,
-    reviews=[],
-    images=[],
-    thumbnail="",
-    minimumOrderQuantity=1,
-    stock=0,
+    title = "",
+    brand = "",
+    price = 0,
+    discountPercentage = 0,
+    description = "",
+    category = "",
+    availabilityStatus = "",
+    warrantyInformation = "",
+    shippingInformation = "",
+    returnPolicy = "",
+    rating = 0,
+    reviews = [],
+    images = [],
+    thumbnail = "",
+    minimumOrderQuantity = 1,
+    stock = 0,
   } = singleProduct;
 
   const allImages = [
@@ -74,11 +76,9 @@ const SingleProductPage = () => {
   function amountincrease() {
     // amount < maxOrder && setAmount((prev) => prev + 1);
     if (minimumOrderQuantity > amount && stock > amount) {
-      setAmount((prev)=>prev+1)
+      setAmount((prev) => prev + 1);
     }
   }
-
-  
 
   return (
     <Wrapper className="section">
@@ -89,7 +89,7 @@ const SingleProductPage = () => {
           {/* ===== Product Images ===== */}
           <div className="product-images">
             <div className="main-image">
-              <img src={mainImage} alt={title} />
+              {mainImage && <img src={mainImage} alt={title} />}
             </div>
 
             <div className="thumbnail-images">
@@ -170,7 +170,10 @@ const SingleProductPage = () => {
               maxOrder={maxOrder}
             />
             {/* Add to cart Button */}
-            <NavLink to="/cart">
+            <NavLink
+              to="/cart"
+              onClick={() => addToCart(id, amount,singleProduct)}
+            >
               <Button disabled={stock === 0} className="btn">
                 Add to Cart
               </Button>
